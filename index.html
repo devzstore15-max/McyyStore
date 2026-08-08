@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiminCihayy - Store</title>
+    <!-- Font Google Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Icon FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-dark: #0b1120;
+            --card-bg: #1e293b;
+            --primary: #3b82f6;
+            --primary-hover: #2563eb;
+            --text-light: #f8fafc;
+            --text-gray: #94a3b8;
+            --border-glow: rgba(59, 130, 246, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            min-height: 100vh;
+            padding-bottom: 50px;
+        }
+
+        /* Header & Hero Section */
+        .top-bar {
+            background: rgba(15, 23, 42, 0.9);
+            padding: 15px 20px;
+            display: flex; align-items: center; gap: 10px;
+            position: sticky; top: 0; z-index: 100;
+            backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .top-bar i { color: #fbbf24; font-size: 1.2rem; }
+        .top-bar h1 { font-size: 1.1rem; font-weight: 700; letter-spacing: 0.5px; }
+
+        .hero {
+            text-align: center; padding: 40px 20px; max-width: 800px; margin: 0 auto;
+        }
+        .badge {
+            display: inline-block; padding: 8px 20px; border-radius: 50px;
+            background: rgba(59, 130, 246, 0.1); border: 1px solid var(--border-glow);
+            color: var(--primary); font-size: 0.85rem; font-weight: 600; margin-bottom: 20px;
+        }
+        .hero h2 { font-size: 2.5rem; font-weight: 800; margin-bottom: 15px; line-height: 1.2; }
+        .hero p { color: var(--text-gray); font-size: 0.95rem; line-height: 1.6; margin-bottom: 30px; }
+
+        /* Product Grid (6 Kotak) */
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+        
+        .grid-products {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex; flex-direction: column; align-items: center; text-align: center;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.2);
+            border-color: var(--border-glow);
+        }
+
+        .icon-box {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), #60a5fa);
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 20px; font-size: 1.5rem; color: white;
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .prod-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+        .prod-desc { font-size: 0.85rem; color: var(--text-gray); margin-bottom: 20px; flex-grow: 1; line-height: 1.5; }
+        
+        .price-tag {
+            font-size: 1.8rem; font-weight: 800; color: var(--primary);
+            margin-bottom: 20px; text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-buy {
+            width: 100%; padding: 12px; border-radius: 10px; border: none;
+            background: var(--primary); color: white; font-weight: 600; font-size: 0.95rem;
+            cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-buy:hover { background: var(--primary-hover); box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+
+        /* Modal / Popup QR */
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px);
+            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 20px;
+        }
+        .modal-overlay.active { display: flex; animation: fadeIn 0.3s; }
+
+        .modal-content {
+            background: var(--card-bg); border-radius: 20px; padding: 30px; width: 100%; max-width: 400px;
+            text-align: center; border: 1px solid var(--border-glow); position: relative;
+        }
+
+        .close-btn {
+            position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.1);
+            border: none; color: white; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+        }
+
+        .qr-box {
+            background: white; padding: 15px; border-radius: 12px; margin: 20px auto;
+            width: 200px; height: 200px; display: flex; align-items: center; justify-content: center;
+        }
+        .qr-box img { width: 100%; height: 100%; object-fit: contain; }
+
+        .modal-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 5px; }
+        .modal-price { color: var(--primary); font-size: 1.5rem; font-weight: 800; margin-bottom: 15px; }
+        .modal-desc { font-size: 0.85rem; color: var(--text-gray); margin-bottom: 20px; }
+
+        .btn-wa {
+            background: #25D366; color: white; width: 100%; padding: 12px; border-radius: 10px;
+            text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;
+            font-weight: 600; transition: 0.3s;
+        }
+        .btn-wa:hover { background: #1ebc57; box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Responsive Mobile */
+        @media (max-width: 768px) {
+            .hero h2 { font-size: 1.8rem; }
+            .grid-products { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <i class="fas fa-bolt"></i>
+        <h1>Website By MiminCihayy</h1>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="badge"><i class="fas fa-shield-alt"></i> Store Kebutuhan Jasteb Mcyy</div>
+        <h2>Real MiminCihayy</h2>
+        <p>All Role Jasteb Dengan Harga Murah Dan Terjangkau Sangat Cocok Untuk Pemula Yang Mau Mulai Berjualan Bisnis Jasteb Dan Juga Kualitas Tidak Kalah Bagusnyaa</p>
+    </section>
+
+    <!-- 6 Kotak Produk -->
+    <div class="container">
+        <div class="grid-products">
+            
+            <!-- Produk 1 -->
+            <div class="product-card">
+                <div class="icon-box"><i class="fas fa-crown"></i></div>
+                <div class="prod-title">PT JASTEB</div>
+                <div class="prod-desc">MENDAPATKAN SEBUAH PANEL YANG BISA DI GUNAKAN UNTUK DAPAT JASTEB ATAU UNCHEK, SEHINGGA BISA BERJUALAN</div>
+                <div class="price-tag">Rp 10.000</div>
+                <button class="btn-buy" onclick="openModal('PT JASTEB', '10.000')">
+                    <i class="fas fa-shopping-cart"></i> Beli Sekarang
+                </button>
+            </div>
+
+            <!-- Produk 2 -->
+            <div class="product-card">
+                <div class="icon-box"><i class="fas fa-crown"></i></div>
+                <div class="prod-title">TEAM RESS</div>
+                <div class="prod-desc">MENDAPATKAN PANEL SEHINGGA BISA OPEN PT SENDIRI DENGAN HARGA TERJANGKAU</div>
+                <div class="price-tag">Rp 15.000</div>
+                <button class="btn-buy" onclick="openModal('TEAM RESS', '15.000')">
+                    <i class="fas fa-shopping-cart"></i> Beli Sekarang
+                </button>
+            </div>
+
+            <!-- Produk 3 -->
+            <div class="product-card">
+                <div class="icon-box"><i class="fas fa-crown"></i></div>
+                <div class="prod-title">TEAM JASTEB</div>
+                <div class="prod-desc">MENDAPATKAN AKSES PANEL JASTEB SEHINGGA BISA JUAL PANEL ATAU TEAM RESS DAN PT JASTEB SENDIRI DENGAN HARGA YANG TERJANGKAU</div>
+                <div class="price-tag">Rp 20.000</div>
+                <button class="btn-buy" onclick="openModal('TEAM JASTEB', '20.000')">
+                    <i class="fas fa-shopping-cart"></i> Beli Sekarang
+                </button>
+            </div>
+
+            <!-- Produk 4 -->
+            <div class="product-card">
+                <div class="icon-box"><i class="fas fa-crown"></i></div>
+                <div class="prod-title">MARGA JASTEB</div>
+                <div class="prod-desc">MENDAPATKAN AKSES PANEL JASTEB SEHINGGA BISA JUAL PANEL ATAU OPEN TEAM JASTEB, TEAM RESS, DAN PT JASTEB DENGAN HARGA YANG TERJANGKAU</div>
+                <div class="price-tag">Rp 35.000</div>
+                <button class="btn-buy" onclick="openModal('PAKET RESELLER', '35.000')">
+                    <i class="fas fa-shopping-cart"></i> Beli Sekarang
+                </button>
+            </div>
+
+            <!-- Produk 5 -->
+            <div class="product-card">
+                <div class="icon-box"><i class="fas fa-rocket"></i></div>
+                <div class="prod-title">FOUNDER JASTEB</div>
+                <div class="prod-desc">MENDAPATKAN AKSES PANEL SEHINGGA BISA JUAL PANEL, PT JASTEB, TEAM RESS, TEAM JASTEB, DAN MARGA JASTEB</div>
+                <div class="price-tag">Rp 50.000</div>
+                <button class="btn-buy" onclick="openModal('DATABASE PREMIUM', '50.000')">
+                    <i class="fas fa-shopping-cart"></i> Beli Sekarang
+                </button>
+            </div>
+
+
+    <!-- Modal Pembayaran QR -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeModal()"><i class="fas fa-times"></i></button>
+            
+            <div class="modal-title">Pembayaran <span id="modalProdName"></span></div>
+            <div class="modal-price" id="modalPriceDisplay"></div>
+            
+            <div class="qr-box">
+                <!-- ️ PENTING: GANTI LINK GAMBAR DI BAWAH INI DENGAN GAMBAR QRIS ANDA SENDIRI -->
+                <img src="https://files.catbox.moe/0l1a3k.jpg" alt="QR Code Pembayaran" id="qrImage">
+            </div>
+
+            <p class="modal-desc">Scan QR di atas menggunakan E-Wallet (DANA/OVO/GOPAY/ShopeePay). Setelah transfer, klik tombol di bawah untuk kirim bukti.</p>
+
+            <a href="#" class="btn-wa" id="waLink" target="_blank">
+                <i class="fab fa-whatsapp"></i> Kirim Bukti TF ke Admin
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Nomor WhatsApp Admin (Format Internasional tanpa +)
+        const ADMIN_WA = "6283863242851"; 
+
+        function openModal(productName, price) {
+            const modal = document.getElementById('paymentModal');
+            const nameEl = document.getElementById('modalProdName');
+            const priceEl = document.getElementById('modalPriceDisplay');
+            const waLink = document.getElementById('waLink');
+
+            // Update isi modal sesuai produk yang diklik
+            nameEl.innerText = productName;
+            priceEl.innerText = "Rp " + price;
+
+            // Buat link WhatsApp otomatis dengan pesan template
+            const message = `Halo Admin Real MiminCihayy, saya sudah melakukan pembayaran untuk produk *${productName}* seharga *Rp ${price}*. Berikut saya lampirkan bukti transfernya.`;
+            waLink.href = `https://wa.me/${ADMIN_WA}?text=${encodeURIComponent(message)}`;
+
+            // Tampilkan modal
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+        }
+
+        // Tutup modal jika klik area gelap di luar kotak
+        document.getElementById('paymentModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+
+</body>
+</html>
